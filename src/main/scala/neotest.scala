@@ -19,19 +19,22 @@ object Main {
       case e:Exception => println(e)
     }
 
-    var alphanumeric = new scala.util.Random(System.currentTimeMillis()).alphanumeric
+    var alphanumeric = new scala.util.Random(System.currentTimeMillis).alphanumeric
+    var random = new scala.util.Random(System.currentTimeMillis)
 
+    val start = System.currentTimeMillis
     var count:Long = 0
-    for(i <- 1 to 1000) {
+    for(i <- 1 to 10) {
       val tx = db.beginTx
-      for(j <- 1 to 1000) {
-        db.createNode(label).setProperty(prop, alphanumeric.take(10).mkString)
-        alphanumeric = alphanumeric.take(10)
+      for(j <- 1 to 100000) {
+        db.createNode(label).setProperty(prop, random.nextInt)
+        //db.createNode(label).setProperty(prop, alphanumeric.take(10).mkString)
+        //alphanumeric = alphanumeric.take(10)
         count = count+1
       }
       tx.success
       tx.finish
-      println("inserted: " + count)
+      println("inserted: " + count + "; elapsed: " + (System.currentTimeMillis - start)/1000.0 + "s")
     }
 
   }
